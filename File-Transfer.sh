@@ -1,6 +1,9 @@
 #!/bin/bash
 #Connect To Source Server
 mkdir $$
+touch $$/email.txt
+echo "Subject: Delivery Notification\n\n">> $$/email.txt
+echo "Hello From Duber V2 :P  " >> $$/email.txt
 if [ ${12} == "Full" ] || [ ${12} == "Pull" ]; then
     source_user="$1"
     source_host="$2"
@@ -55,7 +58,8 @@ if [ ${12} == "Full" ] || [ ${12} == "Push" ]; then
         put -r $$/$local_object_name
         bye
 !
-        echo "Completed Directory Transfer" 
+        echo "Completed Directory Transfer"
+        echo "Successfully Delivered $local_object_name" >> $$/email.txt 
     # Send Plaintext File
     elif [ ${11} == "File" ]; then
         gpg --yes --batch -q --passphrase="$encryption_password" -c $$/$local_object_name
@@ -64,6 +68,7 @@ if [ ${12} == "Full" ] || [ ${12} == "Push" ]; then
         bye
 !
         echo "Completed Plaintext File Transfer" 
+        echo "Successfully Delivered $local_object_name" >> $$/email.txt 
     # Send Encrypted File
     
     elif [ ${11} == "EncF" ]; then 
@@ -80,7 +85,10 @@ if [ ${12} == "Full" ] || [ ${12} == "Push" ]; then
             put -r $$/${local_object_name%.zip}
             bye
 !
-        echo "Completed Zip Archive Transfer" 
+        echo "Completed Zip Archive Transfer"
+        echo "Successfully Delivered $local_object_name" >> $$/email.txt 
     fi
 fi
+#cat $$/email.txt | ssmtp rajvir.bunet01@dixonscarphone.com
+cat $$/email.txt | ssmtp james.ingram01@dixonscarphone.com
 rm -rf $$
