@@ -2,8 +2,7 @@
 #Connect To Source Server
 mkdir $$
 touch $$/email.txt
-echo "Subject: Delivery Notification\n\n">> $$/email.txt
-echo "Hello From Duber V2 :P  " >> $$/email.txt
+echo "Subject: Delivery Notification">> $$/email.txt
 if [ ${12} == "Full" ] || [ ${12} == "Pull" ]; then
     source_user="$1"
     source_host="$2"
