@@ -52,6 +52,9 @@ if [ ${12} == "Full" ] || [ ${12} == "Push" ]; then
     decrypted=`echo $target_password | openssl enc -aes-256-cbc -a -d -salt -pass pass:"ntSQ8gHt)-DXX9u\!"`
     decoded=`echo $decrypted | base64 --decode`
     export SSHPASS=$decoded
+    if [ $4 != $9 ]; then
+        mv $$/$remote_object_name $$/$local_object_name # Renaming
+    fi 
     # Send Directory
     if [ ${11} == "Dir" ]; then
         sshpass -e sftp -q $target_user@$target_host << ! 
