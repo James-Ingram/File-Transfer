@@ -36,7 +36,12 @@ if [ $state == "Full" ] || [ $state == "Pull" ]; then
             get $remote_object_name 
             bye
 !
-        gpg --yes --always-trust --batch -q --output $$/${remote_object_name%.gpg} --passphrase="$decryption_password" --decrypt $$/$remote_object_name
+        for file in $$/*;do
+            if [[ $file == *$local_object_name.gpg ]]; then
+                gpg --yes --always-trust --batch -q --output ${file%.gpg} --passphrase="$decryption_password" --decrypt $file
+                rm $file
+            fi
+        done
         echo "Completed Encrypted File Collection"
     fi  
 fi
@@ -82,7 +87,12 @@ if [ $state == "Full" ] || [ $state == "Push" ]; then
     # Send Encrypted File
     elif [ $object_type == "EncF" ]; then
         if [ $send_encrypted == "true" ]; then
-            gpg --yes --always-trust --batch -q --output $$/$local_object_name --recipient="$recipient" --encrypt $$/$local_object_name
+            for file in $$/*;do
+                if [[ $file == *$local_object_name ]]; then
+                    gpg --yes --always-trust --batch -q --output $file.gpg --recipient="$recipient" --encrypt $file
+                fi
+            done
+            local_object_name=$local_object_name.gpg
         fi
         sshpass -e sftp -q $target_user@$target_host <<!
             put $$/$local_object_name
@@ -91,6 +101,9 @@ if [ $state == "Full" ] || [ $state == "Push" ]; then
         echo "Completed Encrypted File Transfer"
         echo "Successfully Delivered $local_object_name" >>$$/email.txt
     elif [ $object_type == "Zip" ]; then
+        if [[ $$/$remote_object_name == *".gpg"* ]]; then
+            gpg --yes --always-trust --batch -q --output $$/${local_object_name%.gpg} --passphrase="$decryption_password" --decrypt $$/$remote_object_name
+        fi
         unzip $$/$local_object_name -d $$/
         if [ $send_encrypted == "true" ]; then
             for nested_file in $$/${local_object_name%.zip}/*; do
@@ -104,6 +117,6 @@ if [ $state == "Full" ] || [ $state == "Push" ]; then
         echo "Completed Zip Archive Transfer"
         echo "Successfully Delivered $local_object_name" >>$$/email.txt
     fi
-    #rm -rf $$
+    rm -rf $$
 fi
 #cat $$/email.txt | ssmtp james.ingram01@dixonscarphone.com
