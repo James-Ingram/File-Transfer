@@ -5,7 +5,7 @@ touch $$/email.txt
 source ./$1
 echo "Subject: Delivery Notification" >>$$/email.txt
 if [ $state == "Full" ] || [ $state == "Pull" ]; then
-    decrypted=$(echo $source_password | openssl enc -aes-256-cbc -a -d -salt -pass pass:"ntSQ8gHt)-DXX9u\!")
+    decrypted=$(echo $source_password | openssl enc -aes-256-cbc -a -d -salt -pass pass:"$salt")
     decoded=$(echo $decrypted | base64 --decode)
     export SSHPASS=$decoded
     # Get Directory
@@ -15,7 +15,7 @@ if [ $state == "Full" ] || [ $state == "Pull" ]; then
             get -R $remote_object_name 
             bye
 !
-    for file in $$/$remote_object_name*; do
+    for file in $$/$remote_object_name*; do 
         if [[ $file == *".gpg"* ]]; then
             gpg --yes --always-trust --batch -q --output ${file%.gpg} --passphrase="$decryption_password" --decrypt $file
         fi
@@ -49,7 +49,7 @@ fi
 # Connect To Destination Server
 if [ $state == "Full" ] || [ $state == "Push" ]; then
     ## Document Removal of mkdir
-    decrypted=$(echo $target_password | openssl enc -aes-256-cbc -a -d -salt -pass pass:"ntSQ8gHt)-DXX9u\!")
+    decrypted=$(echo $target_password | openssl enc -aes-256-cbc -a -d -salt -pass pass:"$salt")
     decoded=$(echo $decrypted | base64 --decode)
     export SSHPASS=$decoded
     if [ $remote_object_name != $local_object_name ] && [[ $local_object_name != *".gpg"* ]] && [[ $remote_object_name != *".gpg"* ]]; then
