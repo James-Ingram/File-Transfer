@@ -25,6 +25,8 @@ if [ $option == "y" ] || [ $option == "Y" ]; then
     git clone -q https://github.com/James-Ingram/File-Transfer.git
     cp -R File-Transfer/* .
     rm -rf File-Transfer
+    #  Clean-up Of Web-based README (Unfortunately Necessary Location )
+    rm -rf README.md
     echo "${yell}Deleting${normal} This Copy Of The Setup Script Another Copy Is In: ${info}./info/initial-setup.sh${normal}"
     rm -rf $0
 else
