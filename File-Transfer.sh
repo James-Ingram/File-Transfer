@@ -119,4 +119,3 @@ if [ $state == "Full" ] || [ $state == "Push" ]; then
     fi
     rm -rf $$
 fi
-#cat $$/email.txt | ssmtp james.ingram01@dixonscarphone.com
